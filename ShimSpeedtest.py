@@ -5,6 +5,8 @@ import re
 import csv
 from subprocess import Popen, PIPE
 
+INTERVAL = 120 #Seconds
+
 class SpeedTestOutputParser():
 
     def __init__(self, output):
@@ -48,7 +50,7 @@ if __name__ == "__main__":
 
     with open(st + ".csv", "w") as f:
         writer = csv.writer(f)
-        writer.writerow(['date', "ping", "download", "upload"])
+        writer.writerow(['date', "Ping (ms)", "Download Mb/sec", "Upload Mb/sec"])
         while True:
             current_time = time.time()
             date = datetime.datetime.fromtimestamp(current_time).strftime('%Y/%m/%d %H:%M:%S')
@@ -60,6 +62,7 @@ if __name__ == "__main__":
             print("Current Result: Ping {} ms DL {} Mbits / UL {} Mbits".format(parsed.get_ping(), parsed.get_download(), parsed.get_upload()))
 
             writer.writerow([date, parsed.get_ping(), parsed.get_download(), parsed.get_upload()])
-            time.sleep(1)
+            f.flush()
+            time.sleep(INTERVAL)
 
 
