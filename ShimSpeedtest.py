@@ -1,4 +1,5 @@
 import datetime
+import sys
 import time
 import speedtest
 import re
@@ -52,17 +53,21 @@ if __name__ == "__main__":
         writer = csv.writer(f)
         writer.writerow(['date', "Ping (ms)", "Download Mb/sec", "Upload Mb/sec"])
         while True:
-            current_time = time.time()
-            date = datetime.datetime.fromtimestamp(current_time).strftime('%Y/%m/%d %H:%M:%S')
-            process = Popen(["speedtest", "--secure", "--simple"], stdout=PIPE)
-            (output, err) = process.communicate()
-            exit_code = process.wait()
-            parsed = SpeedTestOutputParser(output.decode("utf-8"))
+            try:
+                current_time = time.time()
+                date = datetime.datetime.fromtimestamp(current_time).strftime('%Y/%m/%d %H:%M:%S')
+                process = Popen(["speedtest", "--secure", "--simple"], stdout=PIPE)
+                (output, err) = process.communicate()
+                exit_code = process.wait()
+                parsed = SpeedTestOutputParser(output.decode("utf-8"))
 
-            print("Current Result: Ping {} ms DL {} Mbits / UL {} Mbits".format(parsed.get_ping(), parsed.get_download(), parsed.get_upload()))
+                print("Current Result: Ping {} ms DL {} Mbits / UL {} Mbits".format(parsed.get_ping(), parsed.get_download(), parsed.get_upload()))
 
-            writer.writerow([date, parsed.get_ping(), parsed.get_download(), parsed.get_upload()])
-            f.flush()
-            time.sleep(INTERVAL)
+                writer.writerow([date, parsed.get_ping(), parsed.get_download(), parsed.get_upload()])
+                f.flush()
+                time.sleep(INTERVAL)
+            except:
+                e = sys.exc_info()[0]
+                print("Exception occurred. Keep trying.\r\n{}".format(e))
 
 
