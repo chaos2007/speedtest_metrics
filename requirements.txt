@@ -1,4 +1,5 @@
 speedtest-cli
 pytest
 click
+plotly
 

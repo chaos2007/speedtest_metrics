@@ -1,5 +1,5 @@
-import time
 from speed_test_daemon import SpeedTestDaemon
+from speed_test_visualizer import SpeedTestVisualizer
 import threading
 import click
 
@@ -11,19 +11,25 @@ def greet():
 
 @greet.command()
 @click.option("--frequency", required=True, help="The frequency in seconds to grab metrics.", type=int)
+@click.option("--filename", required=True, help="The name of the file to store data, existing file will be appended to.")
 def daemon(**kwargs):
     stop_signal = threading.Event()
-    daemon = SpeedTestDaemon(kwargs["frequency"], stop_signal)
-    daemon.start()
-    time.sleep(60)
+    dae = SpeedTestDaemon(frequency=kwargs["frequency"],
+                          filename=kwargs["filename"],
+                          stop_signal=stop_signal)
+    dae.start()
+    while not click.confirm("Shutdown daemon?"):
+        pass
+    print("Shutting down daemon, please hold.")
     stop_signal.set()
-    daemon.join()
+    dae.join()
 
 
 @greet.command()
-@click.argument("filename")
+@click.option("--filename", required=True, help="Filename of logfile to visualize.")
 def visualizer(**kwargs):
-    pass
+    viz = SpeedTestVisualizer(kwargs["filename"])
+    viz.graph()
 
 
 if __name__ == "__main__":

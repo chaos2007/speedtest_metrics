@@ -104,3 +104,4 @@ ENV/
 *.csv
 *.pickle
 .idea/
+*.html

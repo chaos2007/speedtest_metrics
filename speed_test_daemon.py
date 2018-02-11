@@ -8,15 +8,14 @@ import sys
 
 class SpeedTestDaemon(threading.Thread):
 
-    def __init__(self, frequency, stop_signal):
+    def __init__(self, frequency, filename, stop_signal):
         super().__init__()
         self.frequency = frequency
+        self.filename = filename
         self.stop_signal = stop_signal
 
     def run(self):
-        st = datetime.datetime.fromtimestamp(time.time()).strftime('%Y-%m-%d-%H-%M-%S')
-
-        with open(st + ".pickle", "wb") as f:
+        with open(self.filename, "a+b") as f:
             while not self.stop_signal.is_set():
                 try:
                     current_time = time.time()
